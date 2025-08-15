@@ -18,6 +18,34 @@ etc.
 
 ## Building
 
+There are 2 ways to build the firmware. Either with the host tools installed on
+your local machine, or with the included dockerfile
+
+### Docker
+
+1. Build the image: `docker build . --tag greenhouse-monitor-builder`
+2. Install esptool on your host for flashing:
+   `python3 -m pip install esptool --user`
+3. Find your attached microcontroller (
+   - on macOS it usually attaches on /dev/cu.usbserial-10:
+     `ls /dev/cu.usbserial-*`
+   - on linux it usually attaches on /dev/ttyUSB0: `ls /dev/ttyUSB*`
+4. Run the serial server:
+   `esp_rfc2217_server.py -v -p 4000 /dev/cu.usbserial-10`
+5. Launch the docker container:
+   `docker run -it --cpus 4 --memory 8G -v .:/code:z greenhouse-monitor-builder`
+
+### Containerization (macOS)
+
+You can also use the new `container` tool on macOS >= 26
+
+1. Start the container service: `container system start`
+2. Build the image:
+   `container build --tag greenhouse-monitor-builder --file Dockerfile .`
+3. ???
+
+### Local Build
+
 First make sure you have swiftly setup with the latest nightly toolchain
 installed. You might need to update `.swift-version` to match if a newer version
 is available.

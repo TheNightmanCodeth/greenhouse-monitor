@@ -1,0 +1,5 @@
+.ccls-cache
+build
+.DS_Store
+.cache
+sdkconfig*
