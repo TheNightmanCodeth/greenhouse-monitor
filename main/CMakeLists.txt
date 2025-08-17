@@ -2,6 +2,9 @@
 idf_component_register(
     SRCS wifi_config.c # We don't have any C++ sources
     PRIV_INCLUDE_DIRS "."
+    REQUIRES driver
+    REQUIRES esp_wifi
+    REQUIRES nvs_flash
 )
 
 idf_build_get_property(target IDF_TARGET)
@@ -62,6 +65,9 @@ target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
     WifiManager.swift
+    Util/BMP280.swift
+    Util/ESP32.swift
+    Util/I2C.swift
 )
 
 add_custom_command(
