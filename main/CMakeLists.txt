@@ -1,6 +1,6 @@
 # Register the app as an IDF component
 idf_component_register(
-    SRCS wifi_config.c # We don't have any C++ sources
+    SRCS bridging_utils.c ## TODO: Delete this
     PRIV_INCLUDE_DIRS "."
     REQUIRES driver
     REQUIRES esp_wifi
@@ -65,9 +65,7 @@ target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
     WifiManager.swift
-    Util/BMP280.swift
-    Util/ESP32.swift
-    Util/I2C.swift
+    Util
 )
 
 add_custom_command(
