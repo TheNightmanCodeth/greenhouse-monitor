@@ -83,6 +83,6 @@ enable_language(Swift)
 target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
-    Util/AHT20.swift
+    Sensors/AHT20.swift
 )
 

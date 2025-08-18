@@ -25,7 +25,7 @@ void logInfo(const char* tag, const char* str) {
 }
 
 // Workaround for 'undefined reference to `swift_float64ToString`'
-void logBMP280Status(const char* tag, float temp, float humid) {
+void logSensorStatus(const char* tag, float temp, float humid) {
   ESP_LOGI(tag, "Temperature: %f", temp);
   ESP_LOGI(tag, "Humidity: %f", humid);
 }

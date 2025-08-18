@@ -18,7 +18,8 @@ func main() {
 
   while true {
     let data = AHT20.read()
-    logBMP280Status("TAG", data.temp, data.humidity)
+    logSensorStatus(tag, data.temp, data.humidity)
+    vTaskDelay(pollInterval / UInt32(portTickPeriodMS()))
   }
   // I2C.masterInit()
 }

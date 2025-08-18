@@ -38,7 +38,7 @@ extern uint16_t portTickPeriodMS();
 // -- Logging --
 void logError(const char* tag, const char* str);
 void logInfo(const char* tag, const char* str);
-void logBMP280Status(const char* tag, float temp, float humid);
+void logSensorStatus(const char* tag, float temp, float humid);
 
 #define I2C_MASTER_NUM I2C_NUM_0
 #define I2C_MASTER_SDA_IO 21
