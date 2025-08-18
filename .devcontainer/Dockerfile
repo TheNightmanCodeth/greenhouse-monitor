@@ -66,7 +66,7 @@ RUN python3 -m pip config set global.break-system-packages true
 RUN mkdir -p ~/esp \
   && cd ~/esp \
   && git clone \
-  --branch master \ 
+  --branch v5.4.1 \ 
   --depth 1 \
   --shallow-submodules \
   --recursive https://github.com/espressif/esp-idf.git \
