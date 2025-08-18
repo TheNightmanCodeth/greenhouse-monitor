@@ -49,7 +49,7 @@ enum BMP280 {
     return ESP_OK
   }
 
-  func read() -> (temp: Float, humidity: Float) {
+  static func read() -> (temp: Float, humidity: Float) {
     var data: [UInt8] = .init()
     let ret = I2C.masterWriteReadDevice(&data, register: BMP280_REG_PRESS_MSB, writeSize: 1, readSize: 6)
     guard ret == ESP_OK else {

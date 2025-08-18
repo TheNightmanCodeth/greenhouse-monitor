@@ -10,26 +10,26 @@
 
 @_cdecl("app_main")
 func main() {
-  print("Hello from Swift on ESP32-C6!")
-  print("")
-  nvs_flash_init()
+  let pollInterval: UInt32 = 2000
+  let tag = "GREENHOUSE_MONITOR"
 
-  let wifiManager = WifiManager(ssid: "The Game", password: "Mufasa2090363!") { handler, base, id, data in
-    if id == WIFI_EVENT_STA_START.rawValue {
-      print("Wifi connecting...")
-    } else if id == WIFI_EVENT_STA_CONNECTED.rawValue {
-      print("Wifi connected")
-    } else if id == WIFI_EVENT_STA_DISCONNECTED.rawValue {
-      print("Wifi disconnected")
-    } else if id == IP_EVENT_STA_GOT_IP.rawValue {
-      print("wifi got ip...")
-    }
+  logInfo(tag, "Initializing I2C...")
+  I2C.masterInit()
+
+  logInfo(tag, "Initializing BMP280...")
+  guard BMP280.initialize() == ESP_OK else {
+    logError(tag, "Failed to initialize BMP280")
+    return
   }
 
-  wifiManager.connect()
+  logInfo(tag, "Starting temp/humidity measurement")
 
   while true {
-    print("Runloop start")
+    let measurement = BMP280.read()
+    logBMP280Status(tag, measurement.temp, measurement.humidity)
+    // logInfo(tag, "Temperature: \(Double(measurement.temp))")
+    // logInfo(tag, "Humidity: \(Double(measurement.humidity))")
+    vTaskDelay(pollInterval / UInt32(portTickPeriodMS()))
   }
 }
 

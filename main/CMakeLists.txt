@@ -1,32 +1,16 @@
 # Register the app as an IDF component
 idf_component_register(
-    SRCS bridging_utils.c ## TODO: Delete this
+    SRCS bridging_utils.cpp ## TODO: Delete this
     PRIV_INCLUDE_DIRS "."
-    REQUIRES driver
-    REQUIRES esp_wifi
-    REQUIRES nvs_flash
+    LDFRAGMENTS "linker.lf"
 )
-
-idf_build_get_property(target IDF_TARGET)
-idf_build_get_property(arch IDF_TARGET_ARCH)
-
-if("${arch}" STREQUAL "xtensa")
-    message(FATAL_ERROR "Not supported target: ${target}")
-endif()
-
-# Extract the -march flag and remove any vendor-specific extensions (_x*)
-string(REGEX MATCH "-march=[^ ]+" march_flag "${CMAKE_C_FLAGS}")
-string(REGEX REPLACE "_x[^ ]*" "" march_flag "${march_flag}")
-
-# Extract the -mabi flag or set a default value if not present
-string(REGEX MATCH "-mabi=[^ ]+" mabi_flag "${CMAKE_C_FLAGS}")
-if("${mabi_flag}" STREQUAL "")
-    set(mabi_flag "-mabi=ilp32")
-endif()
 
 # Clear the default COMPILE_OPTIONS which include a lot of C/C++ specific compiler flags that the Swift compiler will not accept
 get_target_property(var ${COMPONENT_LIB} COMPILE_OPTIONS)
 set_target_properties(${COMPONENT_LIB} PROPERTIES COMPILE_OPTIONS "")
+
+set_property(TARGET ${COMPONENT_LIB} PROPERTY CXX_STANDARD 17)
+target_compile_options(${COMPONENT_LIB} PRIVATE "-DCHIP_HAVE_CONFIG_H")
 
 # Compute -Xcc flags to set up the C and C++ header search paths for Swift (for bridging header).
 set(SWIFT_INCLUDES)
@@ -39,12 +23,47 @@ foreach(dir ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
     string(CONCAT SWIFT_INCLUDES ${SWIFT_INCLUDES} "-I${dir} ")
 endforeach()
 
-# Swift compiler flags to build in Embedded Swift mode, optimize for size, choose the right ISA, ABI, etc.
+# Set device-specific march/mabi flags
+idf_build_get_property(target IDF_TARGET)
+if(${target} STREQUAL "esp32c2" OR ${target} STREQUAL "esp32c3")
+    set(march_flag "rv32imc_zicsr_zifencei")
+    set(mabi_flag "ilp32")
+elseif(${target} STREQUAL "esp32p4")
+    set(march_flag "rv32imafc_zicsr_zifencei")
+    set(mabi_flag "ilp32f")
+else()
+    set(march_flag "rv32imac_zicsr_zifencei")
+    set(mabi_flag "ilp32")
+endif()
+
+# Swift compiler flags to build in Embedded Swift mode, optimize for size, choose the right ISA, ABI, C++ language standard, etc.
 target_compile_options(${COMPONENT_LIB} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:SHELL:
         -target riscv32-none-none-eabi
         -Xfrontend -function-sections -enable-experimental-feature Embedded -wmo -parse-as-library -Osize
-        -Xcc ${march_flag} -Xcc ${mabi_flag} -Xcc -fno-pic -Xcc -fno-pie
-        
+        -color-diagnostics
+        -Xcc -DCHIP_HAVE_CONFIG_H
+        -Xcc -std=c++17
+        -cxx-interoperability-mode=default
+        -Xcc -fno-exceptions
+        -Xcc -fno-rtti
+
+        -Xcc -DESP_PLATFORM 
+        -Xcc -DIDF_VER=\"v5.3-dev-2815-gbe06a6f5ff-dirty\" 
+        -Xcc -DLV_CONF_INCLUDE_SIMPLE 
+        -Xcc -DCONFIG_MBEDTLS_HKDF_C
+        -Xcc -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" 
+        -Xcc -DMD5_ENABLED=1 
+        -Xcc -DSERIAL_FLASHER_BOOT_HOLD_TIME_MS=50 
+        -Xcc -DSERIAL_FLASHER_RESET_HOLD_TIME_MS=100 
+        -Xcc -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE 
+        -Xcc -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ 
+        -Xcc -DUNITY_INCLUDE_CONFIG_H 
+        -Xcc -D_GLIBCXX_HAVE_POSIX_SEMAPHORE 
+        -Xcc -D_GLIBCXX_USE_POSIX_SEMAPHORE 
+        -Xcc -D_POSIX_READER_WRITER_LOCKS
+        -Xcc -march=${march_flag}
+        -Xcc -mabi=${mabi_flag}
+
         -pch-output-dir /tmp
         -Xfrontend -enable-single-module-llvm-emission
         
@@ -64,14 +83,8 @@ enable_language(Swift)
 target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
-    WifiManager.swift
-    Util
-)
-
-add_custom_command(
-    TARGET ${COMPONENT_LIB}
-    POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} --remove-section .swift_modhash
-            $<TARGET_FILE:${COMPONENT_LIB}> $<TARGET_FILE:${COMPONENT_LIB}>
+    Util/BMP280.swift
+    Util/ESP32.swift
+    Util/I2C.swift
 )
 

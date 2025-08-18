@@ -8,14 +8,8 @@
 //
 
 #include "BridgingHeader.h"
-#include "esp_log.h"
 
 // -- Misc. Interop workarounds --
-
-wifi_init_config_t default_wifi_init_config() {
-  wifi_init_config_t config = WIFI_INIT_CONFIG_DEFAULT();
-  return config;
-}
 
 uint16_t portTickPeriodMS() { return portTICK_PERIOD_MS; }
 
@@ -28,6 +22,12 @@ void logError(const char * tag, const char * str) {
 
 void logInfo(const char* tag, const char* str) {
   ESP_LOGI(tag, "%@", str);
+}
+
+// Workaround for 'undefined reference to `swift_float64ToString`'
+void logBMP280Status(const char* tag, float temp, float humid) {
+  ESP_LOGI(tag, "Temperature: %f", temp);
+  ESP_LOGI(tag, "Humidity: %f", humid);
 }
 
 // void i2c_master_init() {

@@ -2,4 +2,8 @@
 build
 .DS_Store
 .cache
-sdkconfig*
+sdkconfig
+sdkconfig.old
+log*
+dependencies.lock
+managed_components
