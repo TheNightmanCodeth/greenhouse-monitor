@@ -1,4 +1,11 @@
+## IDF Component Manager Manifest File
 dependencies:
+  ## Required IDF version
+  idf:
+    version: '>=4.1.0'
+    
+  espressif/aht20: '*'
+
   espressif/cmake_utilities:
     version: 0.*
     rules:  # will add "optional_component" only when all if clauses are True

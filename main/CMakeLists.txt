@@ -83,8 +83,6 @@ enable_language(Swift)
 target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
-    Util/BMP280.swift
-    Util/ESP32.swift
-    Util/I2C.swift
+    Util/AHT20.swift
 )
 

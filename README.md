@@ -10,11 +10,7 @@ Monitors Humidity [ ] Monitors Temperature [ ] Integrates with Matter/Zigbee
 
 ## Goals
 
-I don't even know what I'm doing with this yet.
-
-I think I'd like to have a zigbee network of humidity/temp monitors which
-communicate with an rpi responsible for toggling humidifiers, lights, heatmats,
-etc.
+idk
 
 ## Building
 
@@ -34,15 +30,17 @@ your local machine, or with the included dockerfile
    `esp_rfc2217_server.py -v -p 4000 /dev/cu.usbserial-10`
 5. Launch the docker container:
    `docker run -it --cpus 4 --memory 8G -v .:/code:z greenhouse-monitor-builder`
+6. Run the build:
+   `idf.py set-target esp32c6 && idf.py build`
+7. Flash
+   - (Host) Connect the board to your computer and start the serial server (requires esp-idf installation)
+      `esp_rfc2217_server.py -v -p 4000 /dev/cu.usbmodem1101`
+   - (Container) Flash the board (copy the rfc2217:// url from the output of the previous command):
+      `idf.py flash -p rfc2217://$(your-host-ip):4000?ign_set_control monitor`
 
 ### Containerization (macOS)
 
-You can also use the new `container` tool on macOS >= 26
-
-1. Start the container service: `container system start`
-2. Build the image:
-   `container build --tag greenhouse-monitor-builder --file Dockerfile .`
-3. ???
+WIP
 
 ### Local Build
 
@@ -50,8 +48,12 @@ First make sure you have swiftly setup with the latest nightly toolchain
 installed. You might need to update `.swift-version` to match if a newer version
 is available.
 
-1. Setup ESP-IDF (`. $IDF_PATH/export.sh`)
+1. Setup ESP-IDF / ESP-Matter environment (`. $IDF_PATH/export.sh && . $ESP_MATTER_PATH/export.sh`)
 2. Enter repository root (`cd greenhouse-monitor`)
 3. Set idf target (`idf.py set-target esp32c6`)
 4. Build (`idf.py build`)
-5. Flash (`idf.py flash`)
+5. Flash (`idf.py flash monitor`)
+
+## Development
+
+The quickest way to get going is via the devcontainer in vscode. Just open the project in vscode and open in dev container. It'll take a while to build the first time but then it just works
