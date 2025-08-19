@@ -10,8 +10,10 @@
 //===----------------------------------------------------------------------===//
 
 #include "BridgingHeader.h"
+#include "esp_matter_attribute_utils.h"
 #include "platform/CHIPDeviceLayer.h"
 #include <cstdint>
+#include <sys/types.h>
 
 esp_err_t esp_matter::attribute::set_callback_shim(callback_t_shim callback) {
   return set_callback((callback_t)callback);
@@ -27,11 +29,8 @@ esp_matter::attribute_t *esp_matter::attribute::get_shim(esp_matter::cluster_t *
 
 void tempSensorNotification(unsigned int endpoint_id, float temp) {
   chip::DeviceLayer::SystemLayer().ScheduleLambda([endpoint_id, temp]() {
-    esp_matter::attribute_t * attribute = esp_matter::attribute::get(endpoint_id, 
-                                             chip::app::Clusters::TemperatureMeasurement::Id, 
-                                             chip::app::Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Id);
     esp_matter_attr_val_t val = esp_matter_invalid(NULL);
-    esp_matter::attribute::get_val(attribute, &val);
+    val.type = esp_matter_val_type_t::ESP_MATTER_VAL_TYPE_INT16;
     val.val.i16 = static_cast<int16_t>(temp);
     esp_matter::attribute::update(endpoint_id, 
                       chip::app::Clusters::TemperatureMeasurement::Id, 
@@ -41,12 +40,9 @@ void tempSensorNotification(unsigned int endpoint_id, float temp) {
 
 void humiditySensorNotification(unsigned int endpoint_id, float humidity) {
   chip::DeviceLayer::SystemLayer().ScheduleLambda([endpoint_id, humidity]() {
-    esp_matter::attribute_t * attribute = esp_matter::attribute::get(endpoint_id,
-                                                                     chip::app::Clusters::RelativeHumidityMeasurement::Id,
-                                                                     chip::app::Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id);
     esp_matter_attr_val_t val = esp_matter_invalid(NULL);
-    esp_matter::attribute::get_val(attribute, &val);
-    val.val.i16 = static_cast<int16_t>(humidity);
+    val.type = esp_matter_val_type_t::ESP_MATTER_VAL_TYPE_UINT16;
+    val.val.u16 = static_cast<uint16_t>(humidity);
     esp_matter::attribute::update(endpoint_id,
                                   chip::app::Clusters::RelativeHumidityMeasurement::Id,
                                   chip::app::Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Id, &val);

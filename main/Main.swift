@@ -56,8 +56,8 @@ func main() {
   while true {
     let data = AHT20.read()
     
-    tempSensorNotification(UInt32(tempEndpoint.id), data.temp)
-    humiditySensorNotification(UInt32(humiEndpoint.id), data.humidity)
+    tempSensorNotification(UInt32(tempEndpoint.id), data.temp * 100)
+    humiditySensorNotification(UInt32(humiEndpoint.id), data.humidity * 100)
 
     logSensorStatus(tag, data.temp, data.humidity)
     vTaskDelay(pollInterval / UInt32(portTickPeriodMS()))
