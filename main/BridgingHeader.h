@@ -1,6 +1,7 @@
 #ifndef __BRIDGINGHEADER_H
 #define __BRIDGINGHEADER_H
 
+#include <cstdint>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,6 +32,8 @@ extern "C" char *strdup(const char *s1);
 #include <esp_matter_cluster.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/server/Server.h>
+
+#include "Matter/MatterInterface.h"
 
 // -- Misc. interop workarounds --
 extern uint16_t portTickPeriodMS();

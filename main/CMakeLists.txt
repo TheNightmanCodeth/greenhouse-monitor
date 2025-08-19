@@ -1,6 +1,6 @@
 # Register the app as an IDF component
 idf_component_register(
-    SRCS bridging_utils.cpp ## TODO: Delete this
+    SRCS bridging_utils.cpp Matter/MatterInterface.cpp
     PRIV_INCLUDE_DIRS "."
     LDFRAGMENTS "linker.lf"
 )
@@ -84,5 +84,9 @@ target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
     Sensors/AHT20.swift
+    Matter/Attribute.swift
+    Matter/Clusters.swift
+    Matter/Matter.swift
+    Matter/Node.swift
 )
 

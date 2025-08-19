@@ -57,3 +57,9 @@ is available.
 ## Development
 
 The quickest way to get going is via the devcontainer in vscode. Just open the project in vscode and open in dev container. It'll take a while to build the first time but then it just works
+
+# Pairing
+
+Once you've flashed the device, the default pairing code can be used to get goin:
+
+34970112332
