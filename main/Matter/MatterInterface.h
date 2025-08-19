@@ -27,6 +27,12 @@ namespace esp_matter {
   }
 }
 
+// The esp-idf examples indicate these updates should be scheduled to run on the matter thread. &&
+// I can't figure out how to get `SystemLayer().ScheduleLambda()` from swift so just dropping these 
+// here "for now"
+void tempSensorNotification(unsigned int endpoint_id, float temp);
+void humiditySensorNotification(unsigned int endpoint_id, float humidity);
+
 // Recomissioning causes failures with reference semantics so this is done as a function implemented in C++.
 // Ideally this would be done by changing some of the headers in ESP Matter to have proper Swift annotations.
 void recomissionFabric();

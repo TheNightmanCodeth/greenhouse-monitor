@@ -19,8 +19,6 @@ func main() {
   let pollInterval: UInt32 = 2000
   let tag = "GREENHOUSE_MONITOR"
   
-
-  print("🏎️ Hello, Embedded Swift!")
   print(" * Initializing Sensors")
   _ = AHT20.initialize()
 
@@ -51,14 +49,18 @@ func main() {
   // (6) Provide the node to a Matter application and start it
   let app = Matter.Application()
   app.rootNode = rootNode
+  print("Starting matter")
   app.start()
 
+  print("Starting sensor pollers")
   while true {
     let data = AHT20.read()
-    // TODO: Update attribute values
+    
+    tempSensorNotification(UInt32(tempEndpoint.id), data.temp)
+    humiditySensorNotification(UInt32(humiEndpoint.id), data.humidity)
+
     logSensorStatus(tag, data.temp, data.humidity)
     vTaskDelay(pollInterval / UInt32(portTickPeriodMS()))
   }
-  // I2C.masterInit()
 }
 
