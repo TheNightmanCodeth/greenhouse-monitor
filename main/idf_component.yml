@@ -6,6 +6,8 @@ dependencies:
     
   espressif/aht20: '*'
 
+  lvgl/lvgl: "~8.3.0"
+
   espressif/cmake_utilities:
     version: 0.*
     rules:  # will add "optional_component" only when all if clauses are True

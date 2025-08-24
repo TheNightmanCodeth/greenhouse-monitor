@@ -52,15 +52,23 @@ func main() {
   print("Starting matter")
   app.start()
 
+  print("Starting LCD...")
+
+  // I think there's something whacky with the c files
+  LCD_Init()
+  BK_Light(50)
+  LVGL_Init()
+  let label = Label("Hello, world")
+
   print("Starting sensor pollers")
   while true {
+    lv_timer_handler()
     let data = AHT20.read()
-    
     tempSensorNotification(UInt32(tempEndpoint.id), data.temp * 100)
     humiditySensorNotification(UInt32(humiEndpoint.id), data.humidity * 100)
-
     logSensorStatus(tag, data.temp, data.humidity)
-    vTaskDelay(pollInterval / UInt32(portTickPeriodMS()))
+    label.setText("Current temp: " + String(UInt32(data.temp)) + "\nCurrent humidity: " + String(UInt32(data.humidity)))
+    vTaskDelay(5000 / UInt32(portTickPeriodMS()))
   }
 }
 

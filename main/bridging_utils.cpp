@@ -12,6 +12,11 @@
 // -- Misc. Interop workarounds --
 
 uint16_t portTickPeriodMS() { return portTICK_PERIOD_MS; }
+uint16_t pdMSToTicks(const int ms) { return pdMSToTicks(ms); }
+
+// extern "C" void LCD_Init_Wrapper() {
+//     LCD_Init();
+// }
 
 // -- Logging --
 // Required here because of c++ macro shenanigans

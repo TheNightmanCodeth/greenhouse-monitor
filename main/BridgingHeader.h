@@ -1,10 +1,14 @@
-#ifndef __BRIDGINGHEADER_H
-#define __BRIDGINGHEADER_H
+#pragma once
 
 #include <cstdint>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <unistd.h>
+#include "lvgl.h"
+#include "ST7789.h"
+#include "LVGL_Driver.h"
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -37,6 +41,7 @@ extern "C" char *strdup(const char *s1);
 
 // -- Misc. interop workarounds --
 extern uint16_t portTickPeriodMS();
+extern uint16_t pdMSToTicks(const int ms);
 
 // -- Logging --
 void logError(const char* tag, const char* str);
@@ -47,5 +52,3 @@ void logSensorStatus(const char* tag, float temp, float humid);
 #define I2C_MASTER_SDA_IO 21
 #define I2C_MASTER_SCL_IO 22
 #define I2C_MASTER_FREQ_HZ 100000
-
-#endif

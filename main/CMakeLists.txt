@@ -1,7 +1,18 @@
 # Register the app as an IDF component
 idf_component_register(
-    SRCS bridging_utils.cpp Matter/MatterInterface.cpp
-    PRIV_INCLUDE_DIRS "."
+    SRCS 
+        "bridging_utils.cpp"
+        "Matter/MatterInterface.cpp"
+        "LCD/LCD_Driver/Vernon_ST7789T/Vernon_ST7789T.c"
+        "LCD/LCD_Driver/ST7789.cpp"
+        "LCD/LVGL_Driver/LVGL_Driver.cpp"
+
+    PRIV_INCLUDE_DIRS 
+        "./LCD/LCD_Driver/Vernon_ST7789T" 
+        "./LCD/LCD_Driver" 
+        "./LCD/LVGL_Driver" 
+        "."
+
     LDFRAGMENTS "linker.lf"
 )
 
@@ -88,5 +99,7 @@ target_sources(${COMPONENT_LIB}
     Matter/Clusters.swift
     Matter/Matter.swift
     Matter/Node.swift
+    UI/Components/Label.swift
+    UI/Screen.swift
 )
 
